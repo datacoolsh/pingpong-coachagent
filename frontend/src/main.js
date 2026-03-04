@@ -24,7 +24,7 @@ import {
 } from './api/client.js';
 import { formatTime, copyToClipboard } from './utils/helpers.js';
 import { wechatShareManager } from './utils/wechatShare.js';
-import { getOrCreateUserId, isLoggedIn, isAdmin, getUserInfo } from './utils/userCookie.js';
+import { getOrCreateUserId, isLoggedIn, isAdmin, getUserInfo, getAuthToken } from './utils/userCookie.js';
 import { LoginPage } from './pages/LoginPage.js';
 import { AdminPage } from './pages/AdminPage.js';
 
@@ -771,6 +771,8 @@ class App {
         const getPlayerLabel = () => {
             if (this.selectedTargetPlayer === 'left') return '左侧球员';
             if (this.selectedTargetPlayer === 'right') return '右侧球员';
+            if (this.selectedTargetPlayer === 'front') return '前方球员';
+            if (this.selectedTargetPlayer === 'back') return '后方球员';
             if (this.selectedTargetPlayer === 'single_player') return '';
             return '';
         };
@@ -1020,9 +1022,15 @@ class App {
             // 构造PDF下载URL（注意：后端路由是 /results/{task_id}/pdf，不是 /api/results/{task_id}/pdf）
             const pdfUrl = `${API_BASE_URL}/results/${taskId}/pdf`;
 
-            // 下载PDF
+            // 下载PDF（附带认证头，确保不依赖分享状态）
+            const headers = {};
+            const token = getAuthToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
             const response = await fetch(pdfUrl, {
                 credentials: 'include',
+                headers,
             });
 
             if (!response.ok) {

@@ -254,16 +254,13 @@ export async function uploadVideo(file, onProgress) {
  * @param {string} targetPlayer - 目标球员选择 ('single_player' | 'left' | 'right' | 'front' | 'back')
  */
 export async function startAnalysis(taskId, targetPlayer) {
-    // 映射前端的 front/back 到后端的 single_player
-    // 如果用户直接选择 single_player，则保持原值
-    const mappedPlayer = (targetPlayer === 'front' || targetPlayer === 'back')
-        ? 'single_player'
-        : targetPlayer;
+    // 球员位置直接传递，不做映射（保留 front/back/left/right 的位置语义）
+    const mappedPlayer = targetPlayer;
 
-    // 场景类型：双人对练（front/back）或单人训练
-    const sceneType = (targetPlayer === 'front' || targetPlayer === 'back')
-        ? 'dual_practice'
-        : 'single';
+    // 场景类型：单人训练 vs 双人对练
+    const sceneType = (targetPlayer === 'single_player')
+        ? 'single'
+        : 'dual_practice';
 
     const payload = {
         task_id: taskId,
