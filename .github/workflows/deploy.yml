@@ -96,12 +96,19 @@ jobs:
                 image: ghcr.io/datacoolsh/pingpong-coachagent/frontend:latest
                 ports:
                   - "8100:80"
+                networks:
+                  - default
+                  - gateway-net
                 depends_on:
                   - backend
                 restart: unless-stopped
 
             volumes:
               backend-data:
+
+            networks:
+              gateway-net:
+                external: true
             COMPOSEFILE
 
             cd $DEPLOY_DIR
