@@ -162,10 +162,93 @@ function clearUserId() {
     document.cookie = `${COOKIE_NAME}=; path=/; max-age=0${domain}`;
 }
 
+
+// ============ JWT Token 管理 ============
+
+const TOKEN_KEY = 'auth_token';
+const REFRESH_TOKEN_KEY = 'auth_refresh_token';
+const USER_INFO_KEY = 'auth_user_info';
+
+/**
+ * 获取 access token
+ */
+function getAuthToken() {
+    return localStorage.getItem(TOKEN_KEY);
+}
+
+/**
+ * 设置 auth tokens
+ */
+function setAuthTokens(accessToken, refreshToken) {
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    if (refreshToken) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+    }
+}
+
+/**
+ * 获取 refresh token
+ */
+function getRefreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+/**
+ * 设置用户信息缓存
+ */
+function setUserInfo(userInfo) {
+    localStorage.setItem(USER_INFO_KEY, JSON.stringify(userInfo));
+}
+
+/**
+ * 获取缓存的用户信息
+ */
+function getUserInfo() {
+    try {
+        const info = localStorage.getItem(USER_INFO_KEY);
+        return info ? JSON.parse(info) : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * 检查是否已登录（有 token）
+ */
+function isLoggedIn() {
+    return !!getAuthToken();
+}
+
+/**
+ * 检查是否是管理员
+ */
+function isAdmin() {
+    const info = getUserInfo();
+    return info && info.role === 'admin';
+}
+
+/**
+ * 清除所有认证信息（登出）
+ */
+function clearAuth() {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(USER_INFO_KEY);
+}
+
 export {
     getOrCreateUserId,
     clearUserId,
     checkCookieSupport,
     getCookie,
-    COOKIE_NAME
+    COOKIE_NAME,
+    // JWT token 管理
+    getAuthToken,
+    setAuthTokens,
+    getRefreshToken,
+    setUserInfo,
+    getUserInfo,
+    isLoggedIn,
+    isAdmin,
+    clearAuth,
 };

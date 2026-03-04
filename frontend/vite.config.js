@@ -69,11 +69,27 @@ export default defineConfig({
                 target: 'http://localhost:8000',
                 changeOrigin: true,
             },
+            '/auth': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+            },
+            '/admin': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+            },
             '/ws': {
                 target: 'ws://localhost:8000',
                 ws: true,
             },
             '/frames': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+            },
+            '/videos': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+            },
+            '/results': {
                 target: 'http://localhost:8000',
                 changeOrigin: true,
             },

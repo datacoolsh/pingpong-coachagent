@@ -24,7 +24,9 @@ import {
 } from './api/client.js';
 import { formatTime, copyToClipboard } from './utils/helpers.js';
 import { wechatShareManager } from './utils/wechatShare.js';
-import { getOrCreateUserId } from './utils/userCookie.js';
+import { getOrCreateUserId, isLoggedIn, isAdmin, getUserInfo } from './utils/userCookie.js';
+import { LoginPage } from './pages/LoginPage.js';
+import { AdminPage } from './pages/AdminPage.js';
 
 // HTML 转义辅助函数，防止 XSS 和显示问题
 function escapeHtml(text) {
@@ -1149,9 +1151,45 @@ class App {
     }
 }
 
+// ============ Hash 路由 ============
+
+function handleRoute() {
+    const hash = window.location.hash || '#/';
+
+    // 清理旧应用实例
+    if (window.app && window.app.destroy) {
+        window.app.destroy();
+        window.app = null;
+    }
+
+    if (hash === '#/login') {
+        const loginPage = new LoginPage((userInfo) => {
+            // 登录成功回调
+            window.location.hash = '#/';
+        });
+        loginPage.render();
+    } else if (hash === '#/admin') {
+        // 管理后台：需要管理员权限
+        if (!isLoggedIn() || !isAdmin()) {
+            window.location.hash = '#/login';
+            return;
+        }
+        const adminPage = new AdminPage();
+        adminPage.render();
+    } else {
+        // 默认主页
+        window.app = new App();
+    }
+}
+
 // 初始化应用
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new App();
+    handleRoute();
+});
+
+// 监听 hash 变化
+window.addEventListener('hashchange', () => {
+    handleRoute();
 });
 
 // 导出供测试使用

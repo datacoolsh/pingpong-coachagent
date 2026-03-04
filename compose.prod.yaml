@@ -1,0 +1,21 @@
+services:
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY:-user/pingpong-coachagent}/backend:latest
+    volumes:
+      - backend-data:/app/data
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=sqlite:///./data/coachagent.db
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY:-user/pingpong-coachagent}/frontend:latest
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  backend-data:

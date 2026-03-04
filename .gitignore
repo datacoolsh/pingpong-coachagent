@@ -209,7 +209,5 @@ __marimo__/
 
 .CLAUDE.local.md
 
-data/runs
-data/uploads
-backend/data/runs/
-backend/data/uploads/
+data/
+backend/data/
